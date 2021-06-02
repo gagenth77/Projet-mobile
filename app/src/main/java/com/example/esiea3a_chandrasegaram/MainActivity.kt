@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-        println("APP CREATED")
+        println("NEW APP CREATED")
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             getlistPoke()
         }
