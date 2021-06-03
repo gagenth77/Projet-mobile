@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.esiea3a_chandrasegaram.pokemon.Pokemon
 import com.example.esiea3a_chandrasegaram.R
 
-class PokemonAdapter(private val dataSet: List<Pokemon>) :
-    RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
+class PokemonAdapter(private val dataSet: MutableList<Pokemon>?) : RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
@@ -30,7 +29,7 @@ class PokemonAdapter(private val dataSet: List<Pokemon>) :
         }
     }
 
-    fun updateList(list: List<String>){
+    fun updateList(list: MutableList<Pokemon>?){
         var dataSet = list
         notifyDataSetChanged()
     }
@@ -43,7 +42,7 @@ class PokemonAdapter(private val dataSet: List<Pokemon>) :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val poke = dataSet[position]
+        val poke = this.dataSet!![position]
         val type1 = poke.types?.get(1)?.type!!.name
         val type2 = poke.types?.get(2)?.type!!.name
         viewHolder.idPokemon.append(poke.id.toString())
@@ -57,6 +56,6 @@ class PokemonAdapter(private val dataSet: List<Pokemon>) :
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = dataSet!!.size
 
 }

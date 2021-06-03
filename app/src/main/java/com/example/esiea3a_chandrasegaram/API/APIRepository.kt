@@ -21,8 +21,8 @@ class APIRepository private constructor(){
         return callPokemon!!.getPokemonList(limit)
     }
 
-    fun getPokemon(id: Int): Call<Pokemon> {
-        return callPokemon!!.getPokemon(id)
+    fun getPokemon(name: String): Call<Pokemon> {
+        return callPokemon!!.getPokemon(name)
     }
 
     companion object {

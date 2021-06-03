@@ -1,33 +1,35 @@
 package com.example.esiea3a_chandrasegaram
 
-import android.icu.text.CaseMap
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.RecyclerView
 import com.example.esiea3a_chandrasegaram.API.APIRepository
 import com.example.esiea3a_chandrasegaram.API.ListResponse
 import com.example.esiea3a_chandrasegaram.pokemon.Pokemon
+import com.example.esiea3a_chandrasegaram.presentation.list.PokemonAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
-
+    private var pokemonRecyclerView: RecyclerView? = null
+    private var pokemonAdapter: PokemonAdapter?= null
     private var apiRepository: APIRepository? = APIRepository.instance
-    var url: String? = ""
     var pokemonsToShow: MutableList<Pokemon>? =null
-    var listPokemon: MutableList<Pokemon>? =null
+    var listPokemon: Array<PokePath>? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
-        println("NEW APP CREATED")
+        pokemonRecyclerView = findViewById(R.id.pokemon_recyclerview)
+        pokemonAdapter = PokemonAdapter(pokemonsToShow)
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             getlistPoke()
+            pokemonAdapter!!.updateList(pokemonsToShow)
         }
     }
 
@@ -50,36 +52,36 @@ class MainActivity : AppCompatActivity() {
 
     fun getlistPoke():Unit {
         val limit = 20
-        var id: Int
-        var list: Array<PokePath>? = null
         apiRepository!!.getPokemonList(limit)
                 .enqueue(object : Callback<ListResponse?> {
+
                     override fun onResponse(call: Call<ListResponse?>,response: Response<ListResponse?>) {
                         val listResponse = response.body()
-                        list = listResponse?.results
+                        Log.d("BODY",listResponse.toString())
+                        listPokemon = listResponse?.results
+                        getPokemons(listPokemon!!)
                     }
                     override fun onFailure(call: Call<ListResponse?>, t: Throwable) {
                         println(t.message)
                     }
                 })
-        for(i in 0..limit-1){
-            url = list?.get(i)?.url
-            println("L'URL EST :"+url)
-            id = i+1
-            println(id)
-            apiRepository!!.getPokemon(id)
-                    .enqueue(object : Callback<Pokemon> {
-                        override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
-                            print("On entre ici au bon moment ?")
-                            var pokemon: Pokemon = response.body()!!
-                            listPokemon!!.add(pokemon)
-                        }
+    }
 
-                        override fun onFailure(call: Call<Pokemon>, t: Throwable) {
-                            println(t.message)
-                        }
+    fun getPokemons(list: Array<PokePath>): Unit {
+        var name : String
+        for(i in 0..list.size - 1){
+            name = list[i].name
+            println(name)
+            apiRepository!!.getPokemon(name).enqueue(object : Callback<Pokemon> {
+                override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
+                    val pokemon= response.body()
+                    pokemonsToShow?.add(pokemon!!)
+                }
 
-                    })
+                override fun onFailure(call: Call<Pokemon>, t: Throwable) {
+                    println(t.message)
+                }
+            })
         }
     }
 }

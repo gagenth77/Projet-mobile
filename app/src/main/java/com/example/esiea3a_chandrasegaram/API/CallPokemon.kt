@@ -9,6 +9,6 @@ interface CallPokemon {
     @GET("pokemon/")
     fun getPokemonList(@Query("limit") limit: Int): retrofit2.Call<ListResponse>
 
-    @GET("pokemon/{id}")
-    fun getPokemon(@Path("id") id: Int): retrofit2.Call<Pokemon>
+    @GET("pokemon/{name}")
+    fun getPokemon(@Path("name") name: String): retrofit2.Call<Pokemon>
 }
